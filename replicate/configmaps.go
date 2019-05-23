@@ -22,12 +22,13 @@ type configMapReplicator struct {
 }
 
 // NewConfigMapReplicator creates a new config map replicator
-func NewConfigMapReplicator(client kubernetes.Interface, resyncPeriod time.Duration, allowAll bool) Replicator {
+func NewConfigMapReplicator(client kubernetes.Interface, resyncPeriod time.Duration, allowAll bool, copyFreeNamespaces []string) Replicator {
 	repl := configMapReplicator{
 		replicatorProps: replicatorProps{
-			allowAll:      allowAll,
-			client:        client,
-			dependencyMap: make(map[string]map[string]interface{}),
+			allowAll:           allowAll,
+			copyFreeNamespaces: copyFreeNamespaces,
+			client:             client,
+			dependencyMap:      make(map[string]map[string]interface{}),
 		},
 	}
 

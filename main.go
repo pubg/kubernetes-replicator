@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -21,8 +22,11 @@ func init() {
 	flag.StringVar(&f.ResyncPeriodS, "resync-period", "30m", "resynchronization period")
 	flag.StringVar(&f.StatusAddr, "status-addr", ":9102", "listen address for status and monitoring server")
 	flag.BoolVar(&f.AllowAll, "allow-all", false, "allow replication of all secrets (CAUTION: only use when you know what you're doing)")
+	flag.Var(&f.CopyFreeNamespaces, "copy-free-namespace", "allow replication of all secrets in the namespace (CAUTION: only use when you know what you're doing)")
+
 	flag.Parse()
 
+	fmt.Println(f.CopyFreeNamespaces)
 	f.ResyncPeriod, err = time.ParseDuration(f.ResyncPeriodS)
 	if err != nil {
 		panic(err)
@@ -48,10 +52,10 @@ func main() {
 
 	client = kubernetes.NewForConfigOrDie(config)
 
-	secretRepl := replicate.NewSecretReplicator(client, f.ResyncPeriod, f.AllowAll)
-	configMapRepl := replicate.NewConfigMapReplicator(client, f.ResyncPeriod, f.AllowAll)
-	roleRepl := replicate.NewRoleReplicator(client, f.ResyncPeriod, f.AllowAll)
-	roleBindingRepl := replicate.NewRoleBindingReplicator(client, f.ResyncPeriod, f.AllowAll)
+	secretRepl := replicate.NewSecretReplicator(client, f.ResyncPeriod, f.AllowAll, f.CopyFreeNamespaces)
+	configMapRepl := replicate.NewConfigMapReplicator(client, f.ResyncPeriod, f.AllowAll, f.CopyFreeNamespaces)
+	roleRepl := replicate.NewRoleReplicator(client, f.ResyncPeriod, f.AllowAll, f.CopyFreeNamespaces)
+	roleBindingRepl := replicate.NewRoleBindingReplicator(client, f.ResyncPeriod, f.AllowAll, f.CopyFreeNamespaces)
 
 	go secretRepl.Run()
 

@@ -22,12 +22,13 @@ type roleBindingReplicator struct {
 }
 
 // NewRoleBindingReplicator creates a new roleBinding replicator
-func NewRoleBindingReplicator(client kubernetes.Interface, resyncPeriod time.Duration, allowAll bool) Replicator {
+func NewRoleBindingReplicator(client kubernetes.Interface, resyncPeriod time.Duration, allowAll bool, copyFreeNamespaces []string) Replicator {
 	repl := roleBindingReplicator{
 		replicatorProps: replicatorProps{
-			allowAll:      allowAll,
-			client:        client,
-			dependencyMap: make(map[string]map[string]interface{}),
+			allowAll:           allowAll,
+			copyFreeNamespaces: copyFreeNamespaces,
+			client:             client,
+			dependencyMap:      make(map[string]map[string]interface{}),
 		},
 	}
 

@@ -22,12 +22,13 @@ type roleReplicator struct {
 }
 
 // NewRoleReplicator creates a new role replicator
-func NewRoleReplicator(client kubernetes.Interface, resyncPeriod time.Duration, allowAll bool) Replicator {
+func NewRoleReplicator(client kubernetes.Interface, resyncPeriod time.Duration, allowAll bool, copyFreeNamespaces []string) Replicator {
 	repl := roleReplicator{
 		replicatorProps: replicatorProps{
-			allowAll:      allowAll,
-			client:        client,
-			dependencyMap: make(map[string]map[string]interface{}),
+			allowAll:           allowAll,
+			copyFreeNamespaces: copyFreeNamespaces,
+			client:             client,
+			dependencyMap:      make(map[string]map[string]interface{}),
 		},
 	}
 
